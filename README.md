@@ -166,9 +166,10 @@ Here are all the types of checks currently implemented:
 - `cpu_load` (`Metric::CPULoad`): Normalizes CPU load to a value between 1-100 and inverts it, so higher numbers mean less load and lower numbers mean more. Final health is weighted against other checks by `:weight`. The lower bound of 1 ensures that nodes will not leave the cluster solely based on CPU load. An example of how allowing 0 can cause problems: If one node has 4 CPUs and a load of 4 with CPU usage weighted at 100, it will report its health as 0, and all traffic will be shifted towards other nodes. These nodes in turn hit 100% CPU usage and report 0 health, causing a cascade of exiting nodes that shuts down the service.
   * weight (1-100)
 
-- `mem_load` (`Metric::MemLoad`): Normalized Memory load to a value between 1-100, based on memory available. Final health is weighted against other checks by `:weight`. A `:baseline` level of memory can be set to base the metric based on additional memory available above the baseline. e.g. if 75% utilization is the baseline, we may want to reprort that as being 100% available capacity for the memory metric, allowing the available 25% to drive the metric.
-  * weight (1-100)
-  * baseline (defaults to nil)
+- `memory_load` (`Metric::MemoryLoad`): Normalized Memory load to a value between 0-100, based on memory available. Final health is weighted against other checks by `:weight`. A `:baseline` level of memory can be set to base the metric based on additional memory available above the baseline. e.g. if 75% utilization is the baseline, we may want to reprort that as being 100% available capacity for the memory metric, allowing the available 25% to drive the metric. The `force_down_at` can be used to mark the service down if a certain amount of free memory is reached based on the calculated health measure (unweighted).
+  * weight (0-100)
+  * baseline (0-100. defaults to nil)
+  * force_down_at (0-100. defaults to nil)
 
 - `internet_health` (`Metric::InternetHealth`): Checks connectivity across a set of hosts and computes a weight based on how many are reachable. Helpful if you want to check outbound connectivity through multiple ISPs.
   * weight (0-100)

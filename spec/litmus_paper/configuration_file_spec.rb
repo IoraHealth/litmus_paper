@@ -6,6 +6,7 @@ describe LitmusPaper::ConfigurationFile do
       config_file = LitmusPaper::ConfigurationFile.new(TEST_CONFIG)
       config = config_file.evaluate
       config.services.has_key?('test').should == true
+      config.services.has_key?('passing_test').should == true
     end
 
     it "configures a service via yaml" do

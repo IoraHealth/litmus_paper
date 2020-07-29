@@ -3,25 +3,31 @@ module LitmusPaper
     class MemoryLoad
       PARSE_MEMINFO_REGEX = /^([\w\(\)_]+):\s+(\d+)(?:\skB)?$/.freeze
 
-      def initialize(weight, baseline = nil)
+      attr_reader :weight, :baseline, :force_down_at
+
+      def initialize(weight, baseline: nil, force_down_at: nil)
         @weight = weight
         @baseline = baseline
+        @force_down_at = force_down_at
       end
 
       def current_health
-        calculated_health = (@weight * mem_capacity).to_i
+        health = mem_capacity
+        weighted_health = (@weight * health).floor
 
-        if calculated_health > @weight
+        if weighted_health > @weight
           @weight
-        elsif calculated_health < 1
-          1
+        elsif force_down_at && health <= force_down_at
+          throw(:force_state, :down)
+        elsif weighted_health < 1
+          0
         else
-          calculated_health
+          weighted_health
         end
       end
 
       def mem_capacity
-        [(mem_available.to_f / baseline), @weight].min
+        mem_available.to_f / baseline
       end
 
       def mem_available
@@ -51,11 +57,7 @@ module LitmusPaper
       end
 
       def to_s
-        if @baseline
-          "Metric::MemoryLoad(#{@weight}, #{@baseline})"
-        else
-          "Metric::MemoryLoad(#{@weight})"
-        end
+        "Metric::MemoryLoad(#{@weight}, baseline: #{@baseline || 'nil'}, force_down_at: #{@force_down_at || 'nil'})"
       end
 
       private
