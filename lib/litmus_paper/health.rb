@@ -49,10 +49,15 @@ module LitmusPaper
     end
 
     def perform(metric)
-      health = metric.current_health.ceil
+      health = catch(:force_state) { metric.current_health.ceil }
 
-      @value += health
-      @summary << "#{metric}: #{health}\n"
+      if health.is_a?(Symbol)
+        @forced = health
+        @forced_reason << "#{metric} forced #{health}\n"
+      else
+        @value += health
+        @summary << "#{metric}: #{health}\n"
+      end
     end
 
     def ensure(dependency)

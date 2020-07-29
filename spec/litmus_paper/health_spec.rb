@@ -22,6 +22,17 @@ describe LitmusPaper::Health do
       health.perform(LitmusPaper::Metric::ConstantMetric.new(25))
       health.value.should == 75
     end
+
+    context 'metric throws :force_state' do
+      it 'sets the forced state appropriately' do
+        health = LitmusPaper::Health.new
+        health.perform(ForcedDownMetric.new)
+        health.value.should == 0
+        health.forced?.should be_true
+        health.direction.should == :down
+        health.forced_reason.should match(/ForcedDownMetric forced down/)
+      end
+    end
   end
 
   describe "ensure" do
