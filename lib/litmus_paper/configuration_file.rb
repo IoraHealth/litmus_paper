@@ -77,7 +77,9 @@ module LitmusPaper
             Metric::InternetHealth.new(weight, hosts, check_config)
           when :memory_load
             weight = check_config.delete(:weight)
-            Metric::MemoryLoad.new(weight, **check_config)
+            baseline = check_config.delete(:baseline)
+            force_down_at = check_config.delete(:force_down_at)
+            Metric::MemoryLoad.new(weight, baseline, force_down_at)
           when :script
             command = check_config.delete(:command)
             weight = check_config.delete(:weight)

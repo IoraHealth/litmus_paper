@@ -28,7 +28,7 @@ describe LitmusPaper::Metric::MemoryLoad do
           mem_total: mem_total,
           mem_available: mem_available,
         )
-        mem_load = LitmusPaper::Metric::MemoryLoad.new(100, baseline: 85)
+        mem_load = LitmusPaper::Metric::MemoryLoad.new(100, 85)
         mem_load.current_health.should == (
           (mem_available.to_f / (mem_total - (mem_total * 0.85))) * 100
         ).floor
@@ -40,7 +40,7 @@ describe LitmusPaper::Metric::MemoryLoad do
           mem_total: 10000000,
           mem_available: 5000000,
         )
-        mem_load = LitmusPaper::Metric::MemoryLoad.new(20, baseline: 85)
+        mem_load = LitmusPaper::Metric::MemoryLoad.new(20, 85)
         mem_load.current_health.should == 20
       end
     end
@@ -51,7 +51,7 @@ describe LitmusPaper::Metric::MemoryLoad do
           mem_total: 4000000,
           mem_available: 4096,
         )
-        mem_load = LitmusPaper::Metric::MemoryLoad.new(50, force_down_at: 2)
+        mem_load = LitmusPaper::Metric::MemoryLoad.new(50, nil, 2)
         expect { mem_load.current_health }.to throw_symbol(:force_state, :down)
       end
     end
@@ -109,7 +109,7 @@ describe LitmusPaper::Metric::MemoryLoad do
   describe "#to_s" do
     it "is the check name and the maximum weight" do
       mem_load = LitmusPaper::Metric::MemoryLoad.new(50)
-      mem_load.to_s.should == "Metric::MemoryLoad(50, baseline: nil, force_down_at: nil)"
+      mem_load.to_s.should == "Metric::MemoryLoad(50, nil, nil)"
     end
   end
 end

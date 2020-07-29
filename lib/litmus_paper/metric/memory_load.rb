@@ -5,7 +5,7 @@ module LitmusPaper
 
       attr_reader :weight, :baseline, :force_down_at
 
-      def initialize(weight, baseline: nil, force_down_at: nil)
+      def initialize(weight, baseline = nil, force_down_at = nil)
         @weight = weight
         @baseline = baseline
         @force_down_at = force_down_at
@@ -57,7 +57,7 @@ module LitmusPaper
       end
 
       def to_s
-        "Metric::MemoryLoad(#{@weight}, baseline: #{@baseline || 'nil'}, force_down_at: #{@force_down_at || 'nil'})"
+        "Metric::MemoryLoad(#{@weight}, #{@baseline || 'nil'}, #{@force_down_at || 'nil'})"
       end
 
       private
