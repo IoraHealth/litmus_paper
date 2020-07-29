@@ -26,7 +26,8 @@ module LitmusPaper
       @checks << metric_class.new(options[:weight])
     end
 
-    def measure_health_with_args(metric_class, *args, **kwargs)
+    def measure_health_with_args(*args, **kwargs)
+      metric_class = args.shift
       @checks << metric_class.new(*args, **kwargs)
     end
 
