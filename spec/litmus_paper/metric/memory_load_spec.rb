@@ -54,6 +54,22 @@ describe LitmusPaper::Metric::MemoryLoad do
         mem_load = LitmusPaper::Metric::MemoryLoad.new(50, nil, 2)
         expect { mem_load.current_health }.to throw_symbol(:force_state, :down)
       end
+
+      it 'throws :force_state with :down when below force_down_at and not weighted according to baseline' do
+        LitmusPaper::Metric::MemoryLoad.any_instance.stub(
+          mem_total: 4000000,
+          mem_available: 80000,
+        )
+        mem_load = LitmusPaper::Metric::MemoryLoad.new(50, 85, 2)
+        expect { mem_load.current_health }.to throw_symbol(:force_state, :down)
+
+        LitmusPaper::Metric::MemoryLoad.any_instance.stub(
+          mem_total: 4000000,
+          mem_available: 120000,
+        )
+        mem_load = LitmusPaper::Metric::MemoryLoad.new(50, 85, 2)
+        expect { mem_load.current_health }.not_to throw_symbol(:force_state, :down)
+      end
     end
   end
 

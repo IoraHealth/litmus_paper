@@ -12,12 +12,12 @@ module LitmusPaper
       end
 
       def current_health
-        health = mem_capacity
-        weighted_health = (@weight * health).floor
+        unweighted_health = (100 * (mem_available.to_f / mem_total)).floor
+        weighted_health = (@weight * mem_capacity).floor
 
         if weighted_health > @weight
           @weight
-        elsif force_down_at && health <= force_down_at
+        elsif force_down_at && unweighted_health <= force_down_at
           throw(:force_state, :down)
         elsif weighted_health < 1
           0
